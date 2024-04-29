@@ -1,23 +1,17 @@
-import br.com.curso.alura.records.Ceps;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+package br.com.curso.alura.principal;
 
-import java.io.FileWriter;
+import br.com.curso.alura.records.Ceps;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class BuscaPrincipal {
+    public static List<Ceps> listaDeCeps = new ArrayList<>();
+
     public static void main(String[] args) throws IOException, InterruptedException {
         Scanner leitura = new Scanner(System.in);
-        String cep= " ";
-        List<Ceps> listaDeCeps = new ArrayList<>();
+        String cep = " ";
 
         while (!cep.equalsIgnoreCase("sair")) {
             System.out.println("----------------------------");
@@ -31,33 +25,26 @@ public class BuscaPrincipal {
                 break;
             }
 
-            String endereco = "https://viacep.com.br/ws/" + cep + "/json/";
-//        System.out.println(endereco);
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(endereco))
-                    .build();
+            BuscaCep consultaCep = new BuscaCep();
+            try {
+                Ceps novoEndereco = consultaCep.buscaEndereco(cep);
+                System.out.println(novoEndereco);
+                listaDeCeps.add(novoEndereco);
+            }catch (RuntimeException erro) {
+                System.out.println(erro.getMessage());
+                System.out.println("Finalizando aplicação");
+            }
 
-            HttpResponse<String> response = client
-                    .send(request, HttpResponse.BodyHandlers.ofString());
-            String json = response.body();
-
-            Gson gson = new GsonBuilder()
-                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                    .setPrettyPrinting()
-                    .create();
-
-            Ceps ceps = gson.fromJson(json, Ceps.class);
-            System.out.println(ceps);
+            if (!listaDeCeps.isEmpty()) {
+                GeradorDeArquivo gerador = new GeradorDeArquivo();
+                gerador.geraJson(listaDeCeps);
+                System.out.println("Resultados salvos no arquivo ceps.json");
+            } else {
+                System.out.println("Nenhum resultado para salvar.");
+            }
 
 
-            listaDeCeps.add(ceps);
-
-            FileWriter escrita = new FileWriter("ceps.json");
-            escrita.write(gson.toJson(listaDeCeps));
-            escrita.close();
         }
-        System.out.println("Programa finalizado com sucesso!");
 
     }
 }

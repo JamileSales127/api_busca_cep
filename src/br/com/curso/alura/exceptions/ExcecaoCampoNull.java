@@ -1,4 +1,5 @@
 package br.com.curso.alura.exceptions;
 
-public class Exceptions {
+public class ExcecaoCampoNull {
+
 }
