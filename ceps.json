@@ -1,0 +1,18 @@
+[
+  {
+    "cep": "44255-000",
+    "logradouro": "",
+    "bairro": "",
+    "localidade": "Irará",
+    "uf": "BA",
+    "ddd": "75"
+  },
+  {
+    "cep": "41905-675",
+    "logradouro": "Rua Aurelino Silva",
+    "bairro": "Nordeste",
+    "localidade": "Salvador",
+    "uf": "BA",
+    "ddd": "71"
+  }
+]
